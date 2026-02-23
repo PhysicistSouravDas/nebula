@@ -9,4 +9,6 @@ class FocusSessionSerializer(serializers.ModelSerializer):
     class Meta:
         model = FocusSession
         fields = ['id', 'user', 'start_time', 'end_time', 'duration_minutes', 'status', 'task_tag', 'stellar_object']
+        # making user read-only so the frontend doesn't have to send it
+        read_only_fields = ['user']
 

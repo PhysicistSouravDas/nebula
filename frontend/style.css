@@ -82,3 +82,46 @@ button.danger {
     border-left: 4px solid var(--accent-blue);
 }
 
+.login-box {
+    margin: 3rem auto;
+    padding: 2rem;
+    max-width: 400px;
+    background: rgba(69, 162, 158, 0.05);
+    border: 1px solid var(--accent-dark);
+    border-radius: 8px;
+}
+
+input {
+    width: 90%;
+    padding: 10px;
+    margin: 10px 0;
+    background: #1f2833;
+    border: 1px solid var(--accent-dark);
+    color: white;
+    font-family: inherit;
+    border-radius: 4px;
+}
+
+.error-text {
+    color: var(--danger);
+    font-size: 0.9rem;
+}
+
+/* visual star growth */
+#stellar-visual {
+    height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.star-core {
+    width: 10px;
+    height: 10px;
+    background-color: #ff4c4c; /* starts like a dim red dwarf */
+    border-radius: 50%;
+    box-shadow: 0 0 10px #ff4c4c;
+    transition: all 1s linear; /* smooth growth every second */
+    transform: scale(1);
+}
