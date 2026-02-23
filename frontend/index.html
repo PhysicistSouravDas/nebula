@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Nebula</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Project Nebula</h1>
+            <p>Focus to form your universe.</p>
+        </header>
+
+        <main>
+            <section class="timer-section">
+                <div id="stellar-visual">
+                    <div class="star-placeholder"></div>
+                </div>
+                
+                <h2 id="time-display">25:00</h2>
+                
+                <div class="controls">
+                    <button id="start-btn">Start Ignition</button>
+                    <button id="abort-btn" class="danger" disabled>Abort (Core Collapse)</button>
+                </div>
+            </section>
+
+            <section class="dashboard-section">
+                <h3>Recent Formations</h3>
+                <ul id="session-list">
+                    <li>Loading universe...</li>
+                </ul>
+            </section>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
+
