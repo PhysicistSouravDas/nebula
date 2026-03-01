@@ -16,8 +16,10 @@ const loginError = document.getElementById('login-error');
 const logoutBtn = document.getElementById('logout-btn');
 
 // api endpoints
-const API_URL = 'http://127.0.0.1:8000/api/focus/sessions/';
-const TOKEN_URL = 'http://127.0.0.1:8000/api/token/';
+// const API_URL = 'http://127.0.0.1:8000/api/focus/sessions/';
+// const TOKEN_URL = 'http://127.0.0.1:8000/api/token/';
+const API_URL = 'https://registration-birth-convenience-genre.trycloudflare.com/api/focus';
+const TOKEN_URL = 'https://registration-birth-convenience-genre.trycloudflare.com/api/token/';
 
 let timerInterval;
 let timeLeft = 25 * 60;
