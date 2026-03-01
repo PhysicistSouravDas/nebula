@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activate Account - Project Nebula</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Project Nebula</h1>
+            <p>Observatory Initialization</p>
+        </header>
+
+        <section class="login-box" style="text-align: center;">
+            <h2 id="status-heading">Activating your universe...</h2>
+            <p id="status-message">Please wait while we align the stars.</p>
+
+            <div id="action-links" style="display: none; margin-top: 20px;">
+                <a href="index.html" style="color: var(--accent-blue); text-decoration: none; font-weight: bold;">Return to Login</a>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // The Djoser activation endpoint
+        const ACTIVATE_URL = 'https://bool-handheld-coverage-references.trycloudflare.com/api/auth/users/activation/';
+
+        // Grab UI elements
+        const statusHeading = document.getElementById('status-heading');
+        const statusMessage = document.getElementById('status-message');
+        const actionLinks = document.getElementById('action-links');
+
+        async function activateAccount() {
+            // 1. Extract the uid and token from the URL bar
+            const urlParams = new URLSearchParams(window.location.search);
+            const uid = urlParams.get('uid');
+            const token = urlParams.get('token');
+
+            if (!uid || !token) {
+                statusHeading.textContent = "Activation Failed";
+                statusMessage.textContent = "Missing activation credentials. The link might be broken.";
+                statusMessage.style.color = "var(--danger)";
+                actionLinks.style.display = "block";
+                return;
+            }
+
+            // 2. Send them to Django
+            try {
+                const response = await fetch(ACTIVATE_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ uid: uid, token: token })
+                });
+
+                if (response.ok) {
+                    // Djoser returns a 204 No Content on success
+                    statusHeading.textContent = "Initialization Complete";
+                    statusMessage.textContent = "Your observatory is ready. You can now log in.";
+                    statusMessage.style.color = "var(--accent-blue)";
+                } else {
+                    const data = await response.json();
+                    statusHeading.textContent = "Activation Failed";
+                    statusMessage.textContent = "This link has expired or is invalid.";
+                    statusMessage.style.color = "var(--danger)";
+                    console.error("Activation error details:", data);
+                }
+            } catch (error) {
+                statusHeading.textContent = "Network Error";
+                statusMessage.textContent = "Could not reach the servers. Please try again later.";
+                statusMessage.style.color = "var(--danger)";
+                console.error(error);
+            }
+
+            actionLinks.style.display = "block";
+        }
+
+        // Run the function as soon as the page loads
+        activateAccount();
+    </script>
+</body>
+</html>
