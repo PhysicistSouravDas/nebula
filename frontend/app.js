@@ -7,6 +7,14 @@ const abortBtn = document.getElementById('abort-btn');
 const taskInput = document.getElementById('task-input');
 
 // auth and ui elements
+const signupSection = document.getElementById('signup-section');
+const signupForm = document.getElementById('signup-form');
+const signupUsername = document.getElementById('signup-username');
+const signupEmail = document.getElementById('signup-email');
+const signupPassword = document.getElementById('signup-password');
+const signupMsg = document.getElementById('signup-msg');
+const showSignupBtn = document.getElementById('show-signup');
+const showLoginBtn = document.getElementById('show-login');
 const loginSection = document.getElementById('login-section');
 const appSection = document.getElementById('app-section');
 const loginForm = document.getElementById('login-form');
@@ -20,6 +28,7 @@ const logoutBtn = document.getElementById('logout-btn');
 // const TOKEN_URL = 'http://127.0.0.1:8000/api/token/';
 const API_URL = 'https://bool-handheld-coverage-references.trycloudflare.com/api/focus/sessions/';
 const TOKEN_URL = 'https://bool-handheld-coverage-references.trycloudflare.com/api/token/';
+const REGISTER_URL = 'https://bool-handheld-coverage-references.trycloudflare.com/api/auth/users/';
 
 let timerInterval;
 let timeLeft = 25 * 60;
@@ -95,6 +104,64 @@ function showLogin() {
     loginSection.style.display = 'block';
     appSection.style.display = 'none';
 }
+
+showSignupBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    loginSection.style.display = 'none';
+    signupSection.style.display = 'block';
+});
+
+showLoginBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    signupSection.style.display = 'none';
+    loginSection.style.display = 'block';
+});
+
+async function registerUser(e) {
+    e.preventDefault();
+    signupMsg.style.display = 'none';
+    signupMsg.className = ''; // reset classes
+
+    const userData = {
+        username: signupUsername.value,
+        email: signupEmail.value,
+        password: signupPassword.value
+    };
+
+    try {
+        const response = await fetch(REGISTER_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(userData)
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            signupMsg.textContent = "Success! A verification link has been sent to your email.";
+            signupMsg.style.color = "var(--accent-blue)";
+            signupMsg.style.display = 'block';
+            signupForm.reset();
+        } else {
+            // Djoser sends back specific errors (e.g. "username already exists")
+            let errorText = "Registration failed: ";
+            for (const key in data) {
+                errorText += `${data[key]} `;
+            }
+            signupMsg.textContent = errorText;
+            signupMsg.style.color = "var(--danger)";
+            signupMsg.style.display = 'block';
+        }
+    } catch (error) {
+        console.error("Signup error:", error);
+        signupMsg.textContent = "Network error. Is the server running?";
+        signupMsg.style.color = "var(--danger)";
+        signupMsg.style.display = 'block';
+    }
+}
+
+// Hook it up to the form submission
+signupForm.addEventListener('submit', registerUser);
 
 // --- api functions (now with auth headers) ---
 

@@ -13,14 +13,27 @@
             <p>Focus to form your universe.</p>
         </header>
 
-        <section id="login-section" class="login-box">
+	<section id="login-section" class="login-box">
             <h2>Enter the Observatory</h2>
             <form id="login-form">
                 <input type="text" id="username" placeholder="Username" required>
                 <input type="password" id="password" placeholder="Password" required>
                 <button type="submit">Log In</button>
             </form>
-            <p id="login-error" class="error-text" style="display: none;">Invalid coordinates (wrong username or password).</p>
+            <p id="login-error" class="error-text" style="display: none;">Invalid coordinates (Wrong username or password).</p>
+            <p style="margin-top: 15px; font-size: 0.9rem;">No universe yet? <a href="#" id="show-signup" style="color: var(--accent-blue);">Form one here</a>.</p>
+        </section>
+
+        <section id="signup-section" class="login-box" style="display: none;">
+            <h2>Form a New Universe</h2>
+            <form id="signup-form">
+                <input type="text" id="signup-username" placeholder="Username" required>
+                <input type="email" id="signup-email" placeholder="Email Address" required>
+                <input type="password" id="signup-password" placeholder="Password" required>
+                <button type="submit">Sign Up</button>
+            </form>
+            <p id="signup-msg" style="display: none; margin-top: 10px;"></p>
+            <p style="margin-top: 15px; font-size: 0.9rem;">Already have an observatory? <a href="#" id="show-login" style="color: var(--accent-blue);">Log in</a>.</p>
         </section>
 
         <main id="app-section" style="display: none;">
