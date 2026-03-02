@@ -25,19 +25,6 @@ function updateStellarColor(minutes) {
     document.documentElement.style.setProperty('--slider-color', glowColor);
 }
 
-// Listen for the drag event
-timeSlider.addEventListener('input', (e) => {
-    selectedFocusMinutes = parseInt(e.target.value);
-
-    // Update the text
-    sliderLabel.textContent = `Orbit Duration: ${selectedFocusMinutes} minutes`;
-
-    // Update the glow color
-    updateStellarColor(selectedFocusMinutes);
-
-    document.getElementById('timer-display').textContent = `${selectedFocusMinutes}:00`;
-});
-
 // Set the initial color on page load
 updateStellarColor(timeSlider.value);
 
@@ -76,6 +63,20 @@ const REGISTER_URL = 'https://bool-handheld-coverage-references.trycloudflare.co
 let timerInterval;
 let timeLeft = 25 * 60;
 let isRunning = false;
+
+// Listen for the drag event
+timeSlider.addEventListener('input', (e) => {
+    selectedFocusMinutes = parseInt(e.target.value);
+    sliderLabel.textContent = `Orbit Duration: ${selectedFocusMinutes} minutes`;
+    updateStellarColor(selectedFocusMinutes);
+
+    // FIX: Actually update the main clock and engine if the timer isn't running
+    if (!isRunning) {
+        timeLeft = selectedFocusMinutes * 60;
+        // Pad with zeros so 9 minutes shows as "09:00"
+        timeDisplay.textContent = `${selectedFocusMinutes.toString().padStart(2, '0')}:00`;
+    }
+});
 
 // --- authentication functions ---
 
@@ -274,7 +275,7 @@ async function saveSession(status, duration) {
     }
 }
 
-// --- timer functions ---
+// timer functions
 
 function formatTime(seconds) {
     const m = Math.floor(seconds / 60).toString().padStart(2, '0');
@@ -291,7 +292,7 @@ function updateStarVisual(timeLeft, totalTime) {
 
     starCore.style.transform = `scale(${scale})`;
 
-    // optionally, make it hotter (whiter/bluer) as it grows
+    // make it hotter (whiter/bluer) as it grows
     if (progress > 0.8) {
         starCore.style.backgroundColor = '#66fcf1'; // blue giant phase
         starCore.style.boxShadow = '0 0 30px #66fcf1';
@@ -310,7 +311,6 @@ function startTimer() {
     startBtn.disabled = true;
     abortBtn.disabled = false;
 
-    // if there isn't a target time saved yet, set one for the future
     let targetTime = localStorage.getItem('targetTime');
     if (!targetTime) {
         targetTime = Date.now() + (timeLeft * 1000);
@@ -318,7 +318,6 @@ function startTimer() {
     }
 
     timerInterval = setInterval(() => {
-        // calculate time left based on the actual system clock
         const now = Date.now();
         timeLeft = Math.round((targetTime - now) / 1000);
 
@@ -327,8 +326,8 @@ function startTimer() {
             completeSession();
         } else {
             timeDisplay.textContent = formatTime(timeLeft);
-            // total time is 25 * 60. update the visual!
-            updateStarVisual(timeLeft, 25 * 60);
+            // Use the dynamic time for the visual star calculation
+            updateStarVisual(timeLeft, selectedFocusMinutes * 60);
         }
     }, 1000);
 }
@@ -338,15 +337,16 @@ function abortTimer() {
     isRunning = false;
     startBtn.disabled = false;
     abortBtn.disabled = true;
-    timeDisplay.textContent = "25:00";
-    taskInput.value = '';
-    timeLeft = 25 * 60;
 
-    // clear the saved time so it doesn't resume on refresh
+    // Reset variables to the dynamic slider time
+    timeLeft = selectedFocusMinutes * 60;
+    timeDisplay.textContent = `${selectedFocusMinutes.toString().padStart(2, '0')}:00`;
+    taskInput.value = '';
+
     localStorage.removeItem('targetTime');
 
-    // reset the visual star back to a tiny red dwarf
-    updateStarVisual(25 * 60, 25 * 60);
+    // Reset visual star to dynamic time
+    updateStarVisual(selectedFocusMinutes * 60, selectedFocusMinutes * 60);
 
     saveSession('aborted', 0);
 }
@@ -355,17 +355,19 @@ function completeSession() {
     isRunning = false;
     startBtn.disabled = false;
     abortBtn.disabled = true;
-    timeDisplay.textContent = "25:00";
-    taskInput.value = '';
-    timeLeft = 25 * 60;
 
-    // clear the saved time
+    // Reset variables to the dynamic slider time
+    timeLeft = selectedFocusMinutes * 60;
+    timeDisplay.textContent = `${selectedFocusMinutes.toString().padStart(2, '0')}:00`;
+    taskInput.value = '';
+
     localStorage.removeItem('targetTime');
 
-    // reset the visual star back to a tiny red dwarf
-    updateStarVisual(25 * 60, 25 * 60);
+    // Reset visual star to dynamic time
+    updateStarVisual(selectedFocusMinutes * 60, selectedFocusMinutes * 60);
 
-    saveSession('completed', 25);
+    // Save the actual dynamic time to your database!
+    saveSession('completed', selectedFocusMinutes);
 }
 
 function checkActiveTimer() {
