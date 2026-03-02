@@ -310,6 +310,7 @@ function startTimer() {
     isRunning = true;
     startBtn.disabled = true;
     abortBtn.disabled = false;
+    timeSlider.disabled = true;
 
     let targetTime = localStorage.getItem('targetTime');
     if (!targetTime) {
@@ -337,6 +338,7 @@ function abortTimer() {
     isRunning = false;
     startBtn.disabled = false;
     abortBtn.disabled = true;
+    timeSlider.disabled = false;
 
     // Reset variables to the dynamic slider time
     timeLeft = selectedFocusMinutes * 60;
@@ -355,6 +357,7 @@ function completeSession() {
     isRunning = false;
     startBtn.disabled = false;
     abortBtn.disabled = true;
+    timeSlider.disabled = false;
 
     // Reset variables to the dynamic slider time
     timeLeft = selectedFocusMinutes * 60;
