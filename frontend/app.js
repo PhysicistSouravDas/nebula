@@ -1,3 +1,46 @@
+// Slider Elements
+const timeSlider = document.getElementById('time-slider');
+const sliderLabel = document.getElementById('slider-label');
+
+// This variable will hold the time you actually pass to your countdown function
+let selectedFocusMinutes = 25;
+
+// Function to calculate the color based on the slider value
+function updateStellarColor(minutes) {
+    let hue;
+    // Map 15-67 mins from Blue (200) to Yellow (60)
+    if (minutes <= 67) {
+        const t = (minutes - 15) / (67 - 15);
+        hue = 200 - (t * 140);
+    }
+    // Map 68-120 mins from Yellow (60) to Deep Violet/Red (340)
+    else {
+        const t = (minutes - 67) / (120 - 67);
+        hue = 60 - (t * 80);
+        if (hue < 0) hue += 360;
+    }
+
+    // Construct the HSL color and push it to the CSS variable
+    const glowColor = `hsl(${hue}, 100%, 65%)`;
+    document.documentElement.style.setProperty('--slider-color', glowColor);
+}
+
+// Listen for the drag event
+timeSlider.addEventListener('input', (e) => {
+    selectedFocusMinutes = parseInt(e.target.value);
+
+    // Update the text
+    sliderLabel.textContent = `Orbit Duration: ${selectedFocusMinutes} minutes`;
+
+    // Update the glow color
+    updateStellarColor(selectedFocusMinutes);
+
+    document.getElementById('timer-display').textContent = `${selectedFocusMinutes}:00`;
+});
+
+// Set the initial color on page load
+updateStellarColor(timeSlider.value);
+
 // grabbing the dom elements
 const starCore = document.getElementById('star-core');
 const sessionList = document.getElementById('session-list');
@@ -318,7 +361,7 @@ function completeSession() {
 
     // clear the saved time
     localStorage.removeItem('targetTime');
-    
+
     // reset the visual star back to a tiny red dwarf
     updateStarVisual(25 * 60, 25 * 60);
 

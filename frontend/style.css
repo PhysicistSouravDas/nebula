@@ -125,3 +125,54 @@ input {
     transition: all 1s linear; /* smooth growth every second */
     transform: scale(1);
 }
+
+/* Stellar Core Slider */
+.slider-container {
+    margin: 30px 0;
+    text-align: center;
+}
+
+#slider-label {
+    display: block;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--slider-color, #4a90e2);
+    transition: color 0.2s ease-out;
+    letter-spacing: 1px;
+}
+
+#time-slider {
+    -webkit-appearance: none;
+    width: 100%;
+    max-width: 300px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    outline: none;
+}
+
+/* The Glowing Orb (Chrome/Safari/Edge) */
+#time-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--slider-color, #4a90e2);
+    cursor: pointer;
+    box-shadow: 0 0 15px var(--slider-color, #4a90e2);
+    transition: background 0.2s, box-shadow 0.2s;
+}
+
+/* The Glowing Orb (Firefox) */
+#time-slider::-moz-range-thumb {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--slider-color, #4a90e2);
+    cursor: pointer;
+    box-shadow: 0 0 15px var(--slider-color, #4a90e2);
+    transition: background 0.2s, box-shadow 0.2s;
+    border: none;
+}
