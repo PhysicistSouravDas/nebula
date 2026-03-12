@@ -31,6 +31,8 @@ updateStellarColor(timeSlider.value);
 // grabbing the dom elements
 const starCore = document.getElementById('star-core');
 const starCorona = document.getElementById('star-corona');
+const stellarVisual = document.getElementById('stellar-visual');
+const particles = document.querySelectorAll('.particle');
 const sessionList = document.getElementById('session-list');
 const timeDisplay = document.getElementById('time-display');
 const startBtn = document.getElementById('start-btn');
@@ -241,9 +243,13 @@ async function fetchSessions() {
         const data = await response.json();
         sessionList.innerHTML = '';
 
-        data.forEach(session => {
+        data.slice(0, 10).forEach((session, index) => {
             const li = document.createElement('li');
             const date = new Date(session.start_time).toLocaleDateString();
+            const cappedIndex = Math.min(index, 8);  // 8 items animate at once
+            li.style.setProperty('--i', cappedIndex);
+            const statusClass = session.status === 'completed' ? 'status-completed' : 'status-aborted';
+            li.classList.add(statusClass);
             li.innerHTML = `
                 <strong>${session.stellar_object}</strong> <br>
                 <small>${date} • ${session.duration_minutes} minutes • ${session.task_tag || 'Uncategorized'}</small>
@@ -307,6 +313,13 @@ function updateStarVisual(timeLeft, totalTime) {
     starCorona.style.height = `${coronaSize}px`;
     starCorona.style.opacity = coronaOpacity;
 
+    // helper to update particle colors
+    function setParticleColor(color) {
+        particles.forEach(p => {
+            p.style.backgroundColor = color;
+            p.style.boxShadow = `0 0 6px ${color}`;
+        });
+    }
 
     // make it hotter (whiter/bluer) as it grows
     if (progress > 0.8) {
@@ -314,16 +327,19 @@ function updateStarVisual(timeLeft, totalTime) {
         starCore.style.boxShadow = '0 0 30px #66fcf1';
         starCorona.style.borderColor = '#66fcf1';
         starCorona.style.boxShadow = '0 0 18px #66fcf1, inset 0 0 12px rgba(102,252,241,0.2)';
+        setParticleColor('#66fcf1');
     } else if (progress > 0.4) {
         starCore.style.backgroundColor = '#ffd700'; // yellow sun phase
         starCore.style.boxShadow = '0 0 20px #ffd700';
         starCorona.style.borderColor = '#ffd700';
         starCorona.style.boxShadow = '0 0 14px #ffd700, inset 0 0 8px rgba(255,215,0,0.2)';
+        setParticleColor('#ffd700');
     } else {
         starCore.style.backgroundColor = '#ff4c4c'; // red dwarf phase
         starCore.style.boxShadow = '0 0 10px #ff4c4c';
         starCorona.style.borderColor = '#ff4c4c';
         starCorona.style.boxShadow = '0 0 10px #ff4c4c, inset 0 0 6px rgba(255,76,76,0.2)';
+        setParticleColor('#ff4c4c');
     }
 }
 
@@ -331,6 +347,7 @@ function startTimer() {
     if (isRunning) return;
     isRunning = true;
     starCore.classList.remove('star-idle');
+    stellarVisual.classList.add('timer-active');
     startBtn.disabled = true;
     abortBtn.disabled = false;
     timeSlider.disabled = true;
@@ -360,6 +377,7 @@ function abortTimer() {
     clearInterval(timerInterval);
     isRunning = false;
     starCore.classList.add('star-idle');
+    stellarVisual.classList.remove('timer-active');
     starCorona.style.opacity = '0';
     starCorona.style.width = '20px';
     starCorona.style.height = '20px';
@@ -383,6 +401,7 @@ function abortTimer() {
 function completeSession() {
     isRunning = false;
     starCore.classList.add('star-idle');
+    stellarVisual.classList.remove('timer-active');
     starCorona.style.opacity = '0';
     starCorona.style.width = '20px';
     starCorona.style.height = '20px';

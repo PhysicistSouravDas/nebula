@@ -110,12 +110,51 @@ button.danger:active:not(:disabled) {
     padding: 0;
 }
 
+/* Session list entry animation */
+@keyframes session-enter {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 #session-list li {
     background: #1f2833;
     margin-bottom: 10px;
     padding: 15px;
     border-radius: 4px;
     border-left: 4px solid var(--accent-blue);
+    position: relative;
+    padding-left: 30px;
+    animation: session-enter 0.35s ease both;
+    animation-delay: calc(var(--i, 0) * 0.08s);
+}
+
+/* Status dot */
+#session-list li::before {
+    content: '';
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--accent-dark);
+}
+
+#session-list li.status-completed::before {
+    background-color: var(--accent-blue);
+    box-shadow: 0 0 6px var(--accent-blue);
+}
+
+#session-list li.status-aborted::before {
+    background-color: var(--danger);
+    box-shadow: 0 0 6px var(--danger);
 }
 
 .login-box {
@@ -167,6 +206,74 @@ input {
     align-items: center;
     margin: 20px 0;
     position: relative;
+    perspective: 500px;
+}
+
+/* Orbital rings */
+@keyframes orbit-spin-1 {
+    from { transform: rotateX(72deg) rotateZ(0deg); }
+    to   { transform: rotateX(72deg) rotateZ(360deg); }
+}
+@keyframes orbit-spin-2 {
+    from { transform: rotateX(68deg) rotateZ(120deg); }
+    to   { transform: rotateX(68deg) rotateZ(480deg); }
+}
+@keyframes orbit-spin-3 {
+    from { transform: rotateX(74deg) rotateZ(240deg); }
+    to   { transform: rotateX(74deg) rotateZ(600deg); }
+}
+
+.orbit {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    opacity: 0;
+    transition: opacity 0.6s ease;
+    pointer-events: none;
+}
+
+.orbit-1 {
+    width: 70px;
+    height: 70px;
+    margin-top: -35px;
+    margin-left: -35px;
+    animation: orbit-spin-1 3s linear infinite;
+}
+
+.orbit-2 {
+    width: 100px;
+    height: 100px;
+    margin-top: -50px;
+    margin-left: -50px;
+    animation: orbit-spin-2 6s linear infinite;
+}
+
+.orbit-3 {
+    width: 130px;
+    height: 130px;
+    margin-top: -65px;
+    margin-left: -65px;
+    animation: orbit-spin-3 11s linear infinite;
+}
+
+/* Show orbits only when timer is active */
+#stellar-visual.timer-active .orbit {
+    opacity: 1;
+}
+
+/* Particle dot riding each orbit */
+.particle {
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background-color: #ff4c4c;
+    box-shadow: 0 0 6px #ff4c4c;
+    top: -2px;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 /* Corona ring */
