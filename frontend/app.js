@@ -30,6 +30,7 @@ updateStellarColor(timeSlider.value);
 
 // grabbing the dom elements
 const starCore = document.getElementById('star-core');
+const starCorona = document.getElementById('star-corona');
 const sessionList = document.getElementById('session-list');
 const timeDisplay = document.getElementById('time-display');
 const startBtn = document.getElementById('start-btn');
@@ -299,22 +300,37 @@ function updateStarVisual(timeLeft, totalTime) {
 
     starCore.style.transform = `scale(${scale})`;
 
+    // Corona ring grows and brightens with progress
+    const coronaSize = 20 + (progress * 100);
+    const coronaOpacity = progress * 0.7;
+    starCorona.style.width = `${coronaSize}px`;
+    starCorona.style.height = `${coronaSize}px`;
+    starCorona.style.opacity = coronaOpacity;
+
+
     // make it hotter (whiter/bluer) as it grows
     if (progress > 0.8) {
         starCore.style.backgroundColor = '#66fcf1'; // blue giant phase
         starCore.style.boxShadow = '0 0 30px #66fcf1';
+        starCorona.style.borderColor = '#66fcf1';
+        starCorona.style.boxShadow = '0 0 18px #66fcf1, inset 0 0 12px rgba(102,252,241,0.2)';
     } else if (progress > 0.4) {
         starCore.style.backgroundColor = '#ffd700'; // yellow sun phase
         starCore.style.boxShadow = '0 0 20px #ffd700';
+        starCorona.style.borderColor = '#ffd700';
+        starCorona.style.boxShadow = '0 0 14px #ffd700, inset 0 0 8px rgba(255,215,0,0.2)';
     } else {
         starCore.style.backgroundColor = '#ff4c4c'; // red dwarf phase
         starCore.style.boxShadow = '0 0 10px #ff4c4c';
+        starCorona.style.borderColor = '#ff4c4c';
+        starCorona.style.boxShadow = '0 0 10px #ff4c4c, inset 0 0 6px rgba(255,76,76,0.2)';
     }
 }
 
 function startTimer() {
     if (isRunning) return;
     isRunning = true;
+    starCore.classList.remove('star-idle');
     startBtn.disabled = true;
     abortBtn.disabled = false;
     timeSlider.disabled = true;
@@ -343,6 +359,10 @@ function startTimer() {
 function abortTimer() {
     clearInterval(timerInterval);
     isRunning = false;
+    starCore.classList.add('star-idle');
+    starCorona.style.opacity = '0';
+    starCorona.style.width = '20px';
+    starCorona.style.height = '20px';
     startBtn.disabled = false;
     abortBtn.disabled = true;
     timeSlider.disabled = false;
@@ -362,6 +382,10 @@ function abortTimer() {
 
 function completeSession() {
     isRunning = false;
+    starCore.classList.add('star-idle');
+    starCorona.style.opacity = '0';
+    starCorona.style.width = '20px';
+    starCorona.style.height = '20px';
     startBtn.disabled = false;
     abortBtn.disabled = true;
     timeSlider.disabled = false;

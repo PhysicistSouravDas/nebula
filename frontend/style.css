@@ -143,6 +143,22 @@ input {
     font-size: 0.9rem;
 }
 
+/* Star breathing animation */
+@keyframes star-breathe {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 10px #ff4c4c;
+    }
+    50% {
+        transform: scale(1.18);
+        box-shadow: 0 0 22px #ff4c4c, 0 0 40px rgba(255, 76, 76, 0.35);
+    }
+}
+
+.star-idle {
+    animation: star-breathe 3s ease-in-out infinite;
+}
+
 /* visual star growth */
 #stellar-visual {
     height: 150px;
@@ -150,6 +166,19 @@ input {
     justify-content: center;
     align-items: center;
     margin: 20px 0;
+    position: relative;
+}
+
+/* Corona ring */
+#star-corona {
+    position: absolute;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    width: 20px;
+    height: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 1s linear;
 }
 
 .star-core {
