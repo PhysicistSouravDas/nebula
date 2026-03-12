@@ -52,6 +52,8 @@ const usernameInput = document.getElementById('username');
 const passwordInput = document.getElementById('password');
 const loginError = document.getElementById('login-error');
 const logoutBtn = document.getElementById('logout-btn');
+const topBar = document.getElementById('top-bar');
+const topBarUsername = document.getElementById('top-bar-username');
 
 // api endpoints
 // const API_URL = 'http://127.0.0.1:8000/api/focus/sessions/';
@@ -114,6 +116,7 @@ async function login(e) {
             // save the tokens to the browser
             localStorage.setItem('accessToken', data.access);
             localStorage.setItem('refreshToken', data.refresh);
+            localStorage.setItem('username', usernameInput.value);
 
             // clear inputs and enter the app
             usernameInput.value = '';
@@ -135,6 +138,7 @@ async function login(e) {
 function logout() {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
+    localStorage.removeItem('username');
     showLogin();
 }
 
@@ -142,11 +146,14 @@ function logout() {
 function showApp() {
     loginSection.style.display = 'none';
     appSection.style.display = 'block';
+    topBar.style.display = 'flex';
+    topBarUsername.textContent = localStorage.getItem('username') || 'Observer';
 }
 
 function showLogin() {
     loginSection.style.display = 'block';
     appSection.style.display = 'none';
+    topBar.style.display = 'none';
 }
 
 showSignupBtn.addEventListener('click', (e) => {
