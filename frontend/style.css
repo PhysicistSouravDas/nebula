@@ -378,3 +378,101 @@ input {
     box-shadow: 0 3px 0 #1a5c59, 0 4px 6px rgba(0,0,0,0.4);
 }
 
+/* ── Mobile Responsiveness (≤ 480px) ── */
+@media (max-width: 480px) {
+
+    body {
+        padding: 1rem;
+    }
+
+    header h1 {
+        font-size: 1.4rem;
+        letter-spacing: 1px;
+    }
+
+    header p {
+        font-size: 0.85rem;
+    }
+
+    /* Top bar: tighten up */
+    #top-bar {
+        padding: 6px 10px;
+        font-size: 0.75rem;
+    }
+
+    #top-bar #logout-btn {
+        font-size: 0.7rem;
+        padding: 4px 9px;
+    }
+
+    /* Timer display: scale down the huge clock */
+    #time-display {
+        font-size: 3.2rem;
+    }
+
+    /* Star visual: shrink container so orbits don't clip */
+    #stellar-visual {
+        height: 120px;
+        transform: scale(0.82);
+    }
+
+    /* Timer section: less padding */
+    .timer-section {
+        padding: 1.2rem;
+        margin: 1.5rem 0;
+    }
+
+    /* Task input: full width */
+    input[type="text"] {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* Slider: full width, larger thumb for touch */
+    #time-slider {
+        max-width: calc(100% - 28px);
+        height: 8px;
+    }
+
+    #time-slider::-webkit-slider-thumb {
+        width: 28px;
+        height: 28px;
+    }
+
+    #time-slider::-moz-range-thumb {
+        width: 28px;
+        height: 28px;
+    }
+
+    .slider-container {
+        padding: 0 4px;
+        box-sizing: border-box;
+    }
+
+    /* Buttons: stack vertically, full width */
+    .controls {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .controls button {
+        width: 80%;
+        margin: 0;
+        font-size: 1rem;
+    }
+
+    /* Session list: prevent text overflow */
+    #session-list li {
+        font-size: 0.85rem;
+        padding: 12px 12px 12px 28px;
+        word-break: break-word;
+    }
+
+    /* Login/signup box: full width on small screens */
+    .login-box {
+        margin: 1.5rem auto;
+        padding: 1.2rem;
+    }
+}
