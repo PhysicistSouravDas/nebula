@@ -33,6 +33,8 @@ const starCore = document.getElementById('star-core');
 const starCorona = document.getElementById('star-corona');
 const stellarVisual = document.getElementById('stellar-visual');
 const particles = document.querySelectorAll('.particle');
+const completionMessage = document.getElementById('completion-message');
+const completionText = document.getElementById('completion-text');
 const sessionList = document.getElementById('session-list');
 const timeDisplay = document.getElementById('time-display');
 const startBtn = document.getElementById('start-btn');
@@ -68,6 +70,7 @@ const REGISTER_URL = 'https://bool-handheld-coverage-references.trycloudflare.co
 let timerInterval;
 let timeLeft = 25 * 60;
 let isRunning = false;
+let pendingCeremony = false; // ceremony refers to end of the focus session
 
 // Listen for the drag event
 timeSlider.addEventListener('input', (e) => {
@@ -343,6 +346,73 @@ function updateStarVisual(timeLeft, totalTime) {
     }
 }
 
+// focus session ending ceremony
+function playChime() {
+    try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        function playNote(freq, startTime, duration) {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, startTime);
+            gain.gain.setValueAtTime(0, startTime);
+            gain.gain.linearRampToValueAtTime(0.25, startTime + 0.06);
+            gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+            osc.start(startTime);
+            osc.stop(startTime + duration);
+        }
+        const now = ctx.currentTime;
+        playNote(528, now, 1.8);
+        playNote(660, now + 0.35, 1.6);
+        playNote(792, now + 0.65, 2.2);
+    } catch(e) {
+        console.warn('Audio not available:', e);
+    }
+}
+
+function runCeremony() {
+    // Supernova flash on star
+    starCore.classList.remove('star-idle');
+    starCore.classList.add('star-supernova');
+
+    // Shockwave rings with staggered delays
+    document.querySelectorAll('.shockwave').forEach((sw, i) => {
+        sw.classList.remove('active');
+        void sw.offsetWidth; // force reflow so animation restarts cleanly
+        sw.style.animationDelay = `${i * 0.18}s`;
+        sw.classList.add('active');
+    });
+
+    // Particle burst (orbits are still visible from timer-active)
+    document.querySelectorAll('.orbit').forEach(o => o.classList.add('burst'));
+
+    // After animation settles — reset star and orbits
+    setTimeout(() => {
+        starCore.classList.remove('star-supernova');
+        starCore.classList.add('star-idle');
+        stellarVisual.classList.remove('timer-active');
+        document.querySelectorAll('.orbit').forEach(o => o.classList.remove('burst'));
+
+        // Show completion message
+        completionText.textContent =
+            `${selectedFocusMinutes} minutes of deep focus etched into your universe.`;
+        completionMessage.classList.remove('fading');
+        completionMessage.classList.add('visible');
+
+        // Fade message out after 4 seconds
+        setTimeout(() => {
+            completionMessage.classList.add('fading');
+            setTimeout(() => {
+                completionMessage.classList.remove('visible', 'fading');
+            }, 500);
+        }, 4000);
+
+    }, 1200);
+}
+
+
 function startTimer() {
     if (isRunning) return;
     isRunning = true;
@@ -400,11 +470,11 @@ function abortTimer() {
 
 function completeSession() {
     isRunning = false;
-    starCore.classList.add('star-idle');
-    stellarVisual.classList.remove('timer-active');
-    starCorona.style.opacity = '0';
-    starCorona.style.width = '20px';
-    starCorona.style.height = '20px';
+    // starCore.classList.add('star-idle');
+    // stellarVisual.classList.remove('timer-active');
+    // starCorona.style.opacity = '0';
+    // starCorona.style.width = '20px';
+    // starCorona.style.height = '20px';
     startBtn.disabled = false;
     abortBtn.disabled = true;
     timeSlider.disabled = false;
@@ -417,10 +487,27 @@ function completeSession() {
     localStorage.removeItem('targetTime');
 
     // Reset visual star to dynamic time
-    updateStarVisual(selectedFocusMinutes * 60, selectedFocusMinutes * 60);
+    // updateStarVisual(selectedFocusMinutes * 60, selectedFocusMinutes * 60);
+    // Reset corona regardless
+    starCorona.style.opacity = '0';
+    starCorona.style.width = '20px';
+    starCorona.style.height = '20px';
 
     // Save the actual dynamic time to your database!
     saveSession('completed', selectedFocusMinutes);
+
+    // Sound fires immediately even if tab is hidden
+    playChime();
+
+    if (document.hidden) {
+        // Tab in background - defer ceremony, reset visuals now
+        pendingCeremony = true;
+        stellarVisual.classList.remove('timer-active');
+        starCore.classList.add('star-idle');
+        updateStarVisual(selectedFocusMinutes * 60, selectedFocusMinutes * 60);
+    } else {
+        runCeremony();
+    }
 }
 
 function checkActiveTimer() {
@@ -445,6 +532,13 @@ loginForm.addEventListener('submit', login);
 logoutBtn.addEventListener('click', logout);
 startBtn.addEventListener('click', startTimer);
 abortBtn.addEventListener('click', abortTimer);
+
+document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && pendingCeremony) {
+        pendingCeremony = false;
+        runCeremony();
+    }
+});
 
 // start the app by checking auth
 checkAuth();

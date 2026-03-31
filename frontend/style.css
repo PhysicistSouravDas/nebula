@@ -198,6 +198,103 @@ input {
     animation: star-breathe 3s ease-in-out infinite;
 }
 
+@keyframes supernova-burst {
+    0%   {
+        transform: scale(10);
+        background-color: #66fcf1;
+        box-shadow: 0 0 40px #66fcf1;
+    }
+    40%  {
+        transform: scale(14);
+        background-color: #ffffff;
+        box-shadow: 0 0 120px #ffffff, 0 0 80px #66fcf1;
+    }
+    100% {
+        transform: scale(1);
+        background-color: #ff4c4c;
+        box-shadow: 0 0 10px #ff4c4c;
+    }
+}
+
+.star-supernova {
+    animation: supernova-burst 1.2s ease-out forwards !important;
+}
+
+@keyframes shockwave-expand {
+    0%   { transform: scale(1); opacity: 0.9; }
+    100% { transform: scale(9); opacity: 0; }
+}
+
+.shockwave {
+    position: absolute;
+    border-radius: 50%;
+    border: 2px solid #66fcf1;
+    width: 18px;
+    height: 18px;
+    top: 50%;
+    left: 50%;
+    margin-top: -9px;
+    margin-left: -9px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.shockwave.active {
+    animation: shockwave-expand 1.1s ease-out forwards;
+}
+
+@keyframes orbit-burst {
+    0%   { transform: scale(1); opacity: 1; }
+    100% { transform: scale(3.5); opacity: 0; }
+}
+
+.orbit.burst {
+    animation: orbit-burst 0.8s ease-out forwards !important;
+}
+
+@keyframes message-appear {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes message-disappear {
+    from { opacity: 1; transform: translateY(0); }
+    to   { opacity: 0; transform: translateY(-6px); }
+}
+
+#completion-message {
+    display: none;
+    text-align: center;
+    margin: 0 0 20px 0;
+    padding: 12px;
+    border: 1px solid var(--accent-dark);
+    border-radius: 6px;
+    background: rgba(102, 252, 241, 0.05);
+}
+
+#completion-message.visible {
+    display: block;
+    animation: message-appear 0.5s ease forwards;
+}
+
+#completion-message.fading {
+    animation: message-disappear 0.5s ease forwards;
+}
+
+#completion-title {
+    color: var(--accent-blue);
+    font-size: 1rem;
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+}
+
+#completion-text {
+    color: var(--text-main);
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+    opacity: 0.8;
+}
+
 /* visual star growth */
 #stellar-visual {
     height: 150px;
