@@ -573,3 +573,39 @@ input {
         padding: 1.2rem;
     }
 }
+
+/* Update Banner */
+#update-banner {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(11, 12, 16, 0.92);
+    border-bottom: 1px solid var(--accent-blue);
+    color: var(--text-main);
+    text-align: center;
+    padding: 10px;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+    z-index: 9999;
+    backdrop-filter: blur(4px);
+}
+
+#update-banner.visible {
+    display: block;
+    animation: message-appear 0.4s ease forwards;
+}
+
+#update-reload {
+    color: var(--accent-blue);
+    cursor: pointer;
+    font-weight: bold;
+    text-decoration: underline;
+    margin-left: 6px;
+}
+
+#update-reload:hover {
+    opacity: 0.8;
+}
+

@@ -59,6 +59,8 @@ const loginError = document.getElementById('login-error');
 const logoutBtn = document.getElementById('logout-btn');
 const topBar = document.getElementById('top-bar');
 const topBarUsername = document.getElementById('top-bar-username');
+const updateBanner = document.getElementById('update-banner');
+const updateReload = document.getElementById('update-reload');
 
 // api endpoints
 // const API_URL = 'http://127.0.0.1:8000/api/focus/sessions/';
@@ -539,6 +541,32 @@ document.addEventListener('visibilitychange', () => {
         runCeremony();
     }
 });
+
+// Version polling
+let currentVersion = null;
+
+async function checkVersion() {
+    try {
+        const res = await fetch(`version.json?t=${Date.now()}`);
+        if (!res.ok) return;
+        const data = await res.json();
+        if (currentVersion === null) {
+            // First load — just store it, don't show banner
+            currentVersion = data.version;
+        } else if (data.version !== currentVersion) {
+            // Version changed since page loaded — show banner
+            updateBanner.classList.add('visible');
+        }
+    } catch (e) {
+        // Silently fail — version check is non-critical
+    }
+}
+
+// Check immediately on load, then every 5 minutes
+checkVersion();
+setInterval(checkVersion, 5 * 60 * 1000);
+
+updateReload.addEventListener('click', () => window.location.reload());
 
 // start the app by checking auth
 checkAuth();
