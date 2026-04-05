@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Observatory Stats - Project Nebula</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Project Nebula</h1>
+            <p>Your Universe at a Glance.</p>
+        </header>
+
+        <div id="top-bar">
+            <span id="top-bar-greeting">Observer: <strong id="top-bar-username"></strong></span>
+            <div class="top-bar-right">
+                <a href="index.html" id="nav-observatory">Observatory</a>
+                <button id="logout-btn">Log Out</button>
+            </div>
+        </div>
+
+        <main id="stats-section">
+
+            <!-- Hero Numbers -->
+            <section class="stats-hero">
+                <div class="hero-card">
+                    <div class="hero-value" id="stat-total-hours">--</div>
+                    <div class="hero-label">Total Hours Focused</div>
+                </div>
+                <div class="hero-card">
+                    <div class="hero-value" id="stat-total-sessions">--</div>
+                    <div class="hero-label">Sessions Completed</div>
+                </div>
+                <div class="hero-card">
+                    <div class="hero-value" id="stat-streak">--</div>
+                    <div class="hero-label">Current Streak</div>
+                </div>
+                <div class="hero-card">
+                    <div class="hero-value" id="stat-longest">--</div>
+                    <div class="hero-label">Longest Session (min)</div>
+                </div>
+            </section>
+
+            <!-- Contribution Grid -->
+            <section class="stats-panel">
+                <div class="stats-panel-header">
+                    <h3>Focus Constellation</h3>
+                    <div>
+                        <button class="toggle-btn active" id="btn-rolling">Rolling 52w</button>
+                        <button class="toggle-btn" id="btn-year">This Year</button>
+                    </div>
+                </div>
+                <div id="contribution-grid-container">
+                    <div id="contribution-grid"></div>
+                    <div class="grid-legend">
+                        <span>Less</span>
+                        <div class="legend-cell l0"></div>
+                        <div class="legend-cell l1"></div>
+                        <div class="legend-cell l2"></div>
+                        <div class="legend-cell l3"></div>
+                        <div class="legend-cell l4"></div>
+                        <span>More</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Bar Chart -->
+            <section class="stats-panel">
+                <div class="stats-panel-header">
+                    <h3>Focus Timeline</h3>
+                    <div>
+                        <button class="toggle-btn active" data-period="month">Month</button>
+                        <button class="toggle-btn" data-period="week">Week</button>
+                        <button class="toggle-btn" data-period="year">Year</button>
+                    </div>
+                </div>
+                <canvas id="bar-chart" height="200"></canvas>
+            </section>
+
+            <!-- Tag Breakdown -->
+            <section class="stats-panel">
+                <h3>Cosmic Taxonomy</h3>
+                <div id="tag-breakdown"></div>
+            </section>
+
+            <!-- Ring Chart -->
+            <section class="stats-panel stats-panel-ring">
+                <div>
+                    <h3>Formation Rate</h3>
+                    <canvas id="ring-chart" width="160" height="160"></canvas>
+                </div>
+                <div id="ring-legend"></div>
+            </section>
+
+        </main>
+    </div>
+    <script src="stats.js"></script>
+</body>
+</html>
+
