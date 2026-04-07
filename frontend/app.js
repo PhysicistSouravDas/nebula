@@ -467,7 +467,7 @@ function startTimer() {
     abortBtn.disabled = false;
     timeSlider.disabled = true;
 
-    localStorage.setItem('focusMinutes', selectedFocusMinutes;
+    localStorage.setItem('focusMinutes', selectedFocusMinutes);
 
     let targetTime = localStorage.getItem('targetTime');
     if (!targetTime) {
