@@ -68,6 +68,7 @@ const updateReload = document.getElementById('update-reload');
 const API_URL = 'https://bool-handheld-coverage-references.trycloudflare.com/api/focus/sessions/';
 const TOKEN_URL = 'https://bool-handheld-coverage-references.trycloudflare.com/api/token/';
 const REGISTER_URL = 'https://bool-handheld-coverage-references.trycloudflare.com/api/auth/users/';
+const REFRESH_URL = 'https://bool-handheld-coverage-references.trycloudflare.com/api/token/refresh/';
 
 let timerInterval;
 let timeLeft = 25 * 60;
@@ -270,6 +271,33 @@ async function fetchSessions() {
     }
 }
 
+async function refreshAccessToken() {
+    try {
+        const refresh = localStorage.getItem('refreshToken');
+        if (!refresh) { logout(); return false; }
+
+        const res = await fetch(REFRESH_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ refresh })
+        });
+
+        if (res.ok) {
+            const data = await res.json();
+            localStorage.setItem('accessToken', data.access);
+            // SimpleJWT also returns a new refresh token in rotating mode
+            if (data.refresh) localStorage.setItem('refreshToken', data.refresh);
+            return true;
+        } else {
+            logout();
+            return false;
+        }
+    } catch (e) {
+        console.error('Token refresh failed:', e);
+        return false;
+    }
+}
+
 async function saveSession(status, duration) {
     const sessionData = {
         duration_minutes: duration,
@@ -287,7 +315,22 @@ async function saveSession(status, duration) {
         if (response.ok) {
             fetchSessions();
         } else if (response.status === 401) {
-            logout();
+            // try refreshing the token once, then retry
+			// this is a fix to a bug, where a session is not saved if user logs out
+			// in between a session due to expired token
+			const refreshed = await refreshAccessToken();
+			if (refreshed) {
+				const retry = await fetch(API_URL, {
+					method: 'POST',
+                    headers: getAuthHeaders(),
+                    body: JSON.stringify(sessionData)
+                });
+                if (retry.ok) {
+                    fetchSessions();
+                } else {
+                    logout();
+                }
+            }
         }
     } catch (error) {
         console.error("save error:", error);
@@ -424,6 +467,8 @@ function startTimer() {
     abortBtn.disabled = false;
     timeSlider.disabled = true;
 
+    localStorage.setItem('focusMinutes', selectedFocusMinutes;
+
     let targetTime = localStorage.getItem('targetTime');
     if (!targetTime) {
         targetTime = Date.now() + (timeLeft * 1000);
@@ -463,6 +508,7 @@ function abortTimer() {
     taskInput.value = '';
 
     localStorage.removeItem('targetTime');
+    localStorage.removeItem('focusMinutes');
 
     // Reset visual star to dynamic time
     updateStarVisual(selectedFocusMinutes * 60, selectedFocusMinutes * 60);
@@ -513,6 +559,16 @@ function completeSession() {
 }
 
 function checkActiveTimer() {
+    const savedMinutes = localStorage.getItem('focusMinutes');
+    if (savedMinutes) {
+        selectedFocusMinutes = parseInt(savedMinutes);
+        timeSlider.value = selectedFocusMinutes;
+        sliderLabel.textContent = `Orbit Duration: ${selectedFocusMinutes} minutes`;
+        updateStellarColor(selectedFocusMinutes);
+        timeLeft = selectedFocusMinutes * 60;
+        timeDisplay.textContent = `${selectedFocusMinutes.toString().padStart(2, '0')}:00`;
+    }
+
     const targetTime = localStorage.getItem('targetTime');
 
     if (targetTime) {
