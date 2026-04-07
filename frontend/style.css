@@ -863,3 +863,20 @@ input {
         align-items: flex-start;
     }
 }
+
+#grid-tooltip {
+    display: none;
+    position: fixed;
+    background: #1f2833;
+    color: var(--accent-blue);
+    border: 1px solid var(--accent-dark);
+    border-radius: 4px;
+    padding: 4px 10px;
+    font-size: 0.75rem;
+    font-family: 'Courier New', monospace;
+    pointer-events: none;
+    z-index: 9999;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+

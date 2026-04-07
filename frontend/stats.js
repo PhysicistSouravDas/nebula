@@ -2,6 +2,8 @@
 
 const API_URL = 'https://bool-handheld-coverage-references.trycloudflare.com/api/focus/sessions/';
 
+let chartOffset   = 0;
+let currentPeriod = 'month';
 // DOM refs
 const topBar         = document.getElementById('top-bar');
 const topBarUsername = document.getElementById('top-bar-username');
@@ -47,6 +49,7 @@ async function fetchAndRender() {
         renderTagBreakdown(done);
         renderRingChart(all);
         wireToggles(done);
+        setupGridTooltip();
     } catch (e) {
         console.error('Stats error:', e);
     }
@@ -149,8 +152,30 @@ function renderContributionGrid(done, mode) {
     }
 }
 
+function setupGridTooltip() {
+    const tooltip = document.getElementById('grid-tooltip');
+    const grid    = document.getElementById('contribution-grid');
+
+    grid.addEventListener('mouseover', e => {
+        const cell = e.target.closest('.grid-cell');
+        if (!cell || !cell.title) return;
+        tooltip.textContent = cell.title;
+        tooltip.style.display = 'block';
+    });
+
+    grid.addEventListener('mousemove', e => {
+        tooltip.style.left = `${e.pageX + 12}px`;
+        tooltip.style.top  = `${e.pageY - 28}px`;
+    });
+
+    grid.addEventListener('mouseout', e => {
+        if (!e.target.closest('.grid-cell')) return;
+        tooltip.style.display = 'none';
+    });
+}
+
 // Bar Chart
-function renderBarChart(done, period) {
+function renderBarChart(done, period, offset = 0) {
     const canvas = document.getElementById('bar-chart');
     const ctx    = canvas.getContext('2d');
 
@@ -162,8 +187,9 @@ function renderBarChart(done, period) {
     let values   = [];
 
     if (period === 'month') {
-        const year  = today.getFullYear();
-        const month = today.getMonth();
+        const d = new Date(today.getFullYear(), today.getMonth() + offset, 1);
+        const year  = d.getFullYear();
+        const month = d.getMonth();
         const days  = new Date(year, month + 1, 0).getDate();
         const map   = {};
         done.forEach(s => {
@@ -176,11 +202,14 @@ function renderBarChart(done, period) {
             labels.push(d);
             values.push(map[d] || 0);
         }
+        // update panel subtitle
+        document.getElementById('chart-period-label').textContent =
+            d.toLocaleString('default', { month: 'long', year: 'numeric' });
 
     } else if (period === 'week') {
         const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
         const startOfWeek = new Date(today);
-        startOfWeek.setDate(today.getDate() - today.getDay());
+        startOfWeek.setDate(today.getDate() - today.getDay() + (offset * 7));
         startOfWeek.setHours(0, 0, 0, 0);
         const map = {};
         done.forEach(s => {
@@ -193,9 +222,13 @@ function renderBarChart(done, period) {
             labels.push(dayNames[d]);
             values.push(map[toDateKey(day)] || 0);
         }
+        const endOfWeek = new Date(startOfWeek);
+        endOfWeek.setDate(startOfWeek.getDate() + 6);
+        document.getElementById('chart-period-label').textContent =
+            `${toDateKey(startOfWeek)} → ${toDateKey(endOfWeek)}`;
 
     } else if (period === 'year') {
-        const year       = today.getFullYear();
+        const year       = today.getFullYear() + offset;
         const monthNames = ['Jan','Feb','Mar','Apr','May','Jun',
                             'Jul','Aug','Sep','Oct','Nov','Dec'];
         const map = {};
@@ -209,6 +242,7 @@ function renderBarChart(done, period) {
             labels.push(monthNames[m]);
             values.push(map[m] || 0);
         }
+        document.getElementById('chart-period-label').textContent = String(year);
     }
 
     drawBarChart(ctx, canvas.width, canvas.height, labels, values);
@@ -395,8 +429,28 @@ function wireToggles(done) {
 
     document.querySelectorAll('[data-period]').forEach(btn => {
         btn.addEventListener('click', function () {
+            chartOffset = 0;
+            currentPeriod = this.dataset.period;
             setActive(this, '[data-period]');
-            renderBarChart(done, this.dataset.period);
+            renderBarChart(done, currentPeriod, chartOffset);
         });
     });
+
+    document.getElementById('chart-prev').addEventListener('click', () => {
+        chartOffset--;
+        renderBarChart(done, currentPeriod, chartOffset);
+        // Disable next if we're back at current period
+        document.getElementById('chart-next').disabled = chartOffset >= 0;
+    });
+
+    document.getElementById('chart-next').addEventListener('click', () => {
+        if (chartOffset >= 0) return;
+        chartOffset++;
+        document.getElementById('chart-next').disabled = chartOffset >= 0;
+        renderBarChart(done, currentPeriod, chartOffset);
+    });
+
+    // next arrow starts disabled (already at current period)
+    document.getElementById('chart-next').disabled = true;
 }
+

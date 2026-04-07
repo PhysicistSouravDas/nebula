@@ -69,11 +69,19 @@
             <!-- Bar Chart -->
             <section class="stats-panel">
                 <div class="stats-panel-header">
-                    <h3>Focus Timeline</h3>
+                    <h3>
+                        Focus Timeline <span
+                                            id="chart-period-label"
+                                            style="font-size:0.72rem; opacity:0.6; font-weight:normal;
+                                                   margin-left:8px; letter-spacing:0.5px;">
+                                       </span>
+                    </h3>
                     <div>
+                        <button class="toggle-btn" id="chart-prev">◀</button>
                         <button class="toggle-btn active" data-period="month">Month</button>
                         <button class="toggle-btn" data-period="week">Week</button>
                         <button class="toggle-btn" data-period="year">Year</button>
+                        <button class="toggle-btn" id="chart-next">▶</button>
                     </div>
                 </div>
                 <canvas id="bar-chart" height="200"></canvas>
@@ -96,6 +104,7 @@
 
         </main>
     </div>
+    <div id="grid-tooltip"></div>
     <script src="stats.js"></script>
 </body>
 </html>
