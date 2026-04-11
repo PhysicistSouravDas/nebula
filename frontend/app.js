@@ -8,16 +8,26 @@ let selectedFocusMinutes = 25;
 // Function to calculate the color based on the slider value
 function updateStellarColor(minutes) {
     let hue;
-    // Map 15-67 mins from Blue (200) to Yellow (60)
-    if (minutes <= 67) {
-        const t = (minutes - 15) / (67 - 15);
-        hue = 200 - (t * 140);
+    // // Map 15-67 mins from Blue (200) to Yellow (60)
+    // if (minutes <= 67) {
+    //     const t = (minutes - 15) / (67 - 15);
+    //     hue = 200 - (t * 140);
+    // }
+    // // Map 68-120 mins from Yellow (60) to Deep Violet/Red (340)
+    // else {
+    //     const t = (minutes - 67) / (120 - 67);
+    //     hue = 60 - (t * 80);
+    //     if (hue < 0) hue += 360;
+    // }
+    // Map 15-60 mins from Red (0) to Yellow (60) — M-type to G-type
+    if (minutes <= 60) {
+        const t = (minutes - 15) / (60 - 15);
+        hue = t * 60;
     }
-    // Map 68-120 mins from Yellow (60) to Deep Violet/Red (340)
+    // Map 61-120 mins from Yellow (60) to Blue (220) — G-type to O-type
     else {
-        const t = (minutes - 67) / (120 - 67);
-        hue = 60 - (t * 80);
-        if (hue < 0) hue += 360;
+        const t = (minutes - 60) / (120 - 60);
+        hue = 60 + (t * 160);
     }
 
     // Construct the HSL color and push it to the CSS variable
