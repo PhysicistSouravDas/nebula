@@ -354,6 +354,21 @@ function updateStarVisual(timeLeft, totalTime) {
 
     starCore.style.transform = `scale(${scale})`;
 
+    // Scale orbits to always sit outside the growing star
+    const starDiameter = 10 * scale;
+    const o1 = Math.max(70,  starDiameter + 24);
+    const o2 = Math.max(100, starDiameter + 50);
+    const o3 = Math.max(130, starDiameter + 76);
+
+    const orbits = document.querySelectorAll('.orbit');
+    [o1, o2, o3].forEach((size, i) => {
+        if (!orbits[i]) return;
+        orbits[i].style.width    = `${size}px`;
+        orbits[i].style.height   = `${size}px`;
+        orbits[i].style.marginTop  = `${-size / 2}px`;
+        orbits[i].style.marginLeft = `${-size / 2}px`;
+    });
+
     // Corona ring grows and brightens with progress
     const coronaSize = 20 + (progress * 100);
     const coronaOpacity = progress * 0.7;
