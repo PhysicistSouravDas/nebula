@@ -480,6 +480,48 @@ function playChime() {
     }
 }
 
+let ambientCtx  = null;
+let ambientGain = null;
+
+function startAmbientHum() {
+    try {
+        ambientCtx  = new (window.AudioContext || window.webkitAudioContext)();
+        ambientGain = ambientCtx.createGain();
+        ambientGain.gain.setValueAtTime(0.04, ambientCtx.currentTime);
+        ambientGain.connect(ambientCtx.destination);
+
+        // Two slightly detuned oscillators for a richer, space-like drone
+        [110, 110.4].forEach(freq => {
+            const osc = ambientCtx.createOscillator();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, ambientCtx.currentTime);
+            osc.connect(ambientGain);
+            osc.start();
+        });
+    } catch(e) {
+        console.warn('Ambient audio unavailable:', e);
+    }
+}
+
+function updateAmbientVolume(progress) {
+    if (!ambientGain) return;
+    // Gently rise from 0.04 to 0.13 over the session
+    const vol = 0.04 + (progress * 0.09);
+    ambientGain.gain.setValueAtTime(vol, ambientCtx.currentTime);
+}
+
+function stopAmbientHum() {
+    if (!ambientCtx) return;
+    try {
+        ambientGain.gain.linearRampToValueAtTime(0, ambientCtx.currentTime + 0.8);
+        setTimeout(() => {
+            ambientCtx.close();
+            ambientCtx  = null;
+            ambientGain = null;
+        }, 900);
+    } catch(e) { /* ignore */ }
+}
+
 function runCeremony() {
     // Supernova flash on star
     starCore.classList.remove('star-idle');
@@ -531,6 +573,7 @@ function startTimer() {
     timeSlider.disabled = true;
 
     localStorage.setItem('focusMinutes', selectedFocusMinutes);
+    startAmbientHum();
 
     let targetTime = localStorage.getItem('targetTime');
     if (!targetTime) {
@@ -549,6 +592,7 @@ function startTimer() {
             timeDisplay.textContent = formatTime(timeLeft);
             // Use the dynamic time for the visual star calculation
             updateStarVisual(timeLeft, selectedFocusMinutes * 60);
+            updateAmbientVolume(1 - (timeLeft / (selectedFocusMinutes * 60)));
         }
     }, 1000);
 }
@@ -556,6 +600,7 @@ function startTimer() {
 function abortTimer() {
     clearInterval(timerInterval);
     isRunning = false;
+    stopAmbientHum();
     starCore.classList.add('star-idle');
     stellarVisual.classList.remove('timer-active');
     starCorona.style.opacity = '0';
@@ -581,6 +626,7 @@ function abortTimer() {
 
 function completeSession() {
     isRunning = false;
+    stopAmbientHum();
     // starCore.classList.add('star-idle');
     // stellarVisual.classList.remove('timer-active');
     // starCorona.style.opacity = '0';
