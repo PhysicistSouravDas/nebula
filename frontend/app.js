@@ -40,6 +40,10 @@ const timeDisplay = document.getElementById('time-display');
 const startBtn = document.getElementById('start-btn');
 const abortBtn = document.getElementById('abort-btn');
 const taskInput = document.getElementById('task-input');
+const sumHours    = document.getElementById('sum-hours');
+const sumSessions = document.getElementById('sum-sessions');
+const sumStreak   = document.getElementById('sum-streak');
+const sumTag      = document.getElementById('sum-tag');
 
 // auth and ui elements
 const signupSection = document.getElementById('signup-section');
@@ -234,6 +238,49 @@ function getAuthHeaders() {
     };
 }
 
+function toDateKey(date) {
+    const d = new Date(date);
+    return `${d.getFullYear()}-`
+         + `${String(d.getMonth() + 1).padStart(2, '0')}-`
+         + `${String(d.getDate()).padStart(2, '0')}`;
+}
+
+function computeSummary(all) {
+    const done = all.filter(s => s.status === 'completed');
+
+    // Total hours
+    const totalMins  = done.reduce((sum, s) => sum + s.duration_minutes, 0);
+    sumHours.textContent = (totalMins / 60).toFixed(1);
+
+    // Session count
+    sumSessions.textContent = done.length;
+
+    // Streak
+    const dateMap = {};
+    done.forEach(s => {
+        const key = toDateKey(new Date(s.start_time));
+        dateMap[key] = true;
+    });
+    let streak = 0;
+    const check = new Date();
+    check.setHours(0, 0, 0, 0);
+    while (dateMap[toDateKey(check)]) {
+        streak++;
+        check.setDate(check.getDate() - 1);
+    }
+    sumStreak.textContent = `${streak}d`;
+
+    // Top tag
+    const tagMap = {};
+    done.forEach(s => {
+        const tag = s.task_tag || 'Deep Work';
+        tagMap[tag] = (tagMap[tag] || 0) + 1;
+    });
+    const topTag = Object.entries(tagMap).sort((a, b) => b[1] - a[1])[0];
+    sumTag.textContent = topTag ? topTag[0] : '--';
+}
+
+
 async function fetchSessions() {
     try {
         const response = await fetch(API_URL, {
@@ -247,6 +294,7 @@ async function fetchSessions() {
         }
 
         const data = await response.json();
+        computeSummary(data);
         sessionList.innerHTML = '';
 
         data.slice(0, 10).forEach((session, index) => {

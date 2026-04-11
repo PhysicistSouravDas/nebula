@@ -880,3 +880,40 @@ input {
     white-space: nowrap;
 }
 
+/* Summary Strip */
+#summary-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.8rem;
+    margin: 0 0 1.8rem 0;
+}
+
+.summary-card {
+    background: rgba(69, 162, 158, 0.07);
+    border: 1px solid var(--accent-dark);
+    border-radius: 6px;
+    padding: 0.9rem 0.5rem;
+    text-align: center;
+}
+
+.summary-value {
+    font-size: 1.4rem;
+    color: var(--accent-blue);
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.summary-label {
+    font-size: 0.68rem;
+    color: var(--text-main);
+    opacity: 0.6;
+    margin-top: 4px;
+    letter-spacing: 0.4px;
+}
+
+@media (max-width: 480px) {
+    #summary-strip {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
