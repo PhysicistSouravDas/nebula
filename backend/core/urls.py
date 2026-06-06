@@ -25,5 +25,9 @@ urlpatterns = [
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     # endpoint to refresh an expired access token
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    # djoser handles user registration, password resets, and email verification
+    path('api/auth/', include('djoser.urls')),
+    # djoser also hooks into our simple JWT tokens
+    path('api/auth/', include('djoser.urls.jwt')),
 ]
 

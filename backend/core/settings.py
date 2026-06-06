@@ -11,8 +11,11 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 import os
+from dotenv import load_dotenv
 import dj_database_url
 from pathlib import Path
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,9 +28,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-ghkn31%5vsysrx2g3n@a*n)-gi$d7-5i464kcoej9^=d2r5*=c'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.trycloudflare.com']
+
+CSRF_TRUSTED_ORIGINS = ['https://*.trycloudflare.com']
 
 
 # Application definition
@@ -42,6 +47,8 @@ INSTALLED_APPS = [
     # installed apps
     'rest_framework',
     'corsheaders',
+    'djoser',
+    'anymail',
     'focus',
 ]
 
@@ -131,7 +138,13 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = False # False
+
+CORS_ALLOWED_ORIGINS = [
+    "http://127.0.0.1:5500",
+    "http://localhost:5500",
+    "https://thenebulaproject.netlify.app",
+]
 
 # configuring rest framework to use jwt authentication
 REST_FRAMEWORK = {
@@ -147,3 +160,37 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
 }
+
+# Djoser settings
+DOMAIN = 'thenebulaproject.netlify.app'
+SITE_NAME = 'Project Nebula'
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+DJOSER = {
+    'LOGIN_FIELD': 'username',
+    'USER_CREATE_PASSWORD_RETAIN': False,
+    'SEND_ACTIVATION_EMAIL': True,
+    'SEND_CONFIRMATION_EMAIL': True,
+    'PASSWORD_CHANGED_EMAIL_CONFIRMATION': True,
+    # 'DOMAIN': 'thenebulaproject.netlify.app',
+    # 'SITE_NAME': 'Project Nebula',
+    'ACTIVATION_URL': 'activate.html?uid={uid}&token={token}',
+    'PASSWORD_RESET_CONFIRM_URL': 'reset-password.html?uid={uid}&token={token}',
+}
+
+# Email config
+EMAIL_BACKEND = 'anymail.backends.resend.EmailBackend'
+
+ANYMAIL = {
+    "RESEND_API_KEY": os.environ.get("RESEND_API_KEY"),
+}
+
+DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL")
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_BACKEND = 'anymail.backends.resend.EmailBackend'
+# EMAIL_HOST = 'smtp.google.com'
+# EMAIL_PORT = 465
+# EMAIL_USE_SSL = True
+# EMAIL_USE_TLS = False
+# EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+# EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+
