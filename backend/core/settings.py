@@ -30,7 +30,10 @@ SECRET_KEY = 'django-insecure-ghkn31%5vsysrx2g3n@a*n)-gi$d7-5i464kcoej9^=d2r5*=c
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.trycloudflare.com']
+ALLOWED_HOSTS = [
+    'localhost', '127.0.0.1', '.trycloudflare.com',
+    os.environ.get('SERVER_DOMAIN_ADDR'),
+]
 
 CSRF_TRUSTED_ORIGINS = ['https://*.trycloudflare.com']
 
@@ -137,6 +140,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 CORS_ALLOW_ALL_ORIGINS = False # False
 
