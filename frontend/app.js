@@ -79,10 +79,12 @@ const updateReload = document.getElementById('update-reload');
 // api endpoints
 // const API_URL = 'http://127.0.0.1:8000/api/focus/sessions/';
 // const TOKEN_URL = 'http://127.0.0.1:8000/api/token/';
-const API_URL = 'https://bool-handheld-coverage-references.trycloudflare.com/api/focus/sessions/';
-const TOKEN_URL = 'https://bool-handheld-coverage-references.trycloudflare.com/api/token/';
-const REGISTER_URL = 'https://bool-handheld-coverage-references.trycloudflare.com/api/auth/users/';
-const REFRESH_URL = 'https://bool-handheld-coverage-references.trycloudflare.com/api/token/refresh/';
+const BASE_URL = 'https://api.physicsadvisor.com/api';
+
+const API_URL = `${BASE_URL}/focus/sessions/`;
+const TOKEN_URL = `${BASE_URL}/token/`;
+const REGISTER_URL = `${BASE_URL}/auth/users/`;
+const REFRESH_URL = `${BASE_URL}/token/refresh/`;
 
 let timerInterval;
 let timeLeft = 25 * 60;
