@@ -1,6 +1,6 @@
 'use strict';
 
-const API_URL = 'https://bool-handheld-coverage-references.trycloudflare.com/api/focus/sessions/';
+const API_URL = 'https://api.physicsadvisor.com/api/focus/sessions/';
 
 let chartOffset   = 0;
 let currentPeriod = 'month';
