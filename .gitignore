@@ -1,7 +1,10 @@
+**/venv/
 backend/venv/
 **/__pycache__/
 backend/*.pyc
 backend/db.sqlite3
+backend/.env
+backend/staticfiles
 
 .DS_Store
 
