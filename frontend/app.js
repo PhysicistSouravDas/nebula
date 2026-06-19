@@ -365,6 +365,9 @@ async function saveSession(status, duration) {
         task_tag: taskInput.value.trim() || 'Deep Work'
     };
 
+    taskInput.value = '';
+    localStorage.removeItem('taskTag');
+
     try {
         const response = await fetch(API_URL, {
             method: 'POST',
@@ -585,6 +588,7 @@ function startTimer() {
     timeSlider.disabled = true;
 
     localStorage.setItem('focusMinutes', selectedFocusMinutes);
+    localStorage.setItem('taskTag', taskInput.value.trim());
     startAmbientHum();
 
     let targetTime = localStorage.getItem('targetTime');
@@ -625,10 +629,11 @@ function abortTimer() {
     // Reset variables to the dynamic slider time
     timeLeft = selectedFocusMinutes * 60;
     timeDisplay.textContent = `${selectedFocusMinutes.toString().padStart(2, '0')}:00`;
-    taskInput.value = '';
+    // taskInput.value = '';
 
     localStorage.removeItem('targetTime');
     localStorage.removeItem('focusMinutes');
+    localStorage.removeItem('taskTag');
 
     // Reset visual star to dynamic time
     updateStarVisual(selectedFocusMinutes * 60, selectedFocusMinutes * 60);
@@ -651,7 +656,7 @@ function completeSession() {
     // Reset variables to the dynamic slider time
     timeLeft = selectedFocusMinutes * 60;
     timeDisplay.textContent = `${selectedFocusMinutes.toString().padStart(2, '0')}:00`;
-    taskInput.value = '';
+    // taskInput.value = '';
 
     localStorage.removeItem('targetTime');
 
@@ -681,6 +686,7 @@ function completeSession() {
 
 function checkActiveTimer() {
     const savedMinutes = localStorage.getItem('focusMinutes');
+    const savedTag = localStorage.getItem('taskTag');
     if (savedMinutes) {
         selectedFocusMinutes = parseInt(savedMinutes);
         timeSlider.value = selectedFocusMinutes;
@@ -688,6 +694,10 @@ function checkActiveTimer() {
         updateStellarColor(selectedFocusMinutes);
         timeLeft = selectedFocusMinutes * 60;
         timeDisplay.textContent = `${selectedFocusMinutes.toString().padStart(2, '0')}:00`;
+    }
+
+    if (savedTag) {
+	taskInput.value = savedTag;
     }
 
     const targetTime = localStorage.getItem('targetTime');
