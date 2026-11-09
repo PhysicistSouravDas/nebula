@@ -144,8 +144,19 @@ function renderContributionGrid(done, mode) {
         const isFuture = cur > today;
 
         const cell       = document.createElement('div');
-        cell.className   = `grid-cell ${isFuture ? 'l-future' : intensityClass(mins)}`;
-        if (!isFuture) cell.title = `${key}: ${mins} min`;
+
+	// Hypersleep / Migration period (Aug 1 - Nov 9, 2026)
+	const isHypersleep = (key >= '2026-08-01' && key <= '2026-11-09');
+
+	if (isFuture) {
+            cell.className = 'grid-cell l-future';
+        } else if (isHypersleep) {
+            cell.className = 'grid-cell l-hypersleep';
+            cell.title = `${key}: Hypersleep (System Migration)`;
+        } else {
+            cell.className = `grid-cell ${intensityClass(mins)}`;
+            cell.title = `${key}: ${mins} min`;
+        }
 
         grid.appendChild(cell);
         cur.setDate(cur.getDate() + 1);
