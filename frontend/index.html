@@ -32,7 +32,10 @@
                 <button type="submit">Log In</button>
             </form>
             <p id="login-error" class="error-text" style="display: none;">Invalid coordinates (Wrong username or password).</p>
-            <p style="margin-top: 15px; font-size: 0.9rem;">No universe yet? <a href="#" id="show-signup" style="color: var(--accent-blue);">Form one here</a>.</p>
+            <div style="margin-top: 15px; font-size: 0.9rem; display: flex; justify-content: space-between;">
+                <span><a href="#" id="show-forgot-password" style="color: var(--text-main); opacity: 0.7;">Forgot Password?</a></span>
+                <span>No universe yet? <a href="#" id="show-signup" style="color: var(--accent-blue);">Form one here</a></span>
+            </div>
         </section>
 
         <section id="signup-section" class="login-box" style="display: none;">
@@ -45,6 +48,17 @@
             </form>
             <p id="signup-msg" style="display: none; margin-top: 10px;"></p>
             <p style="margin-top: 15px; font-size: 0.9rem;">Already have an observatory? <a href="#" id="show-login" style="color: var(--accent-blue);">Log in</a>.</p>
+        </section>
+
+        <section id="forgot-password-section" class="login-box" style="display: none;">
+            <h2>Reset Password</h2>
+            <p style="font-size: 0.85rem; opacity: 0.8; margin-bottom: 15px;">Enter your email and we'll send you a password-reset link.</p>
+            <form id="forgot-password-form">
+                <input type="email" id="forgot-email" placeholder="Email Address" required>
+                <button type="submit">Send Link</button>
+            </form>
+            <p id="forgot-msg" style="display: none; margin-top: 10px;"></p>
+            <p style="margin-top: 15px; font-size: 0.9rem;"><a href="#" id="back-to-login" style="color: var(--accent-blue);">Back to Login</a></p>
         </section>
 
         <main id="app-section" style="display: none;">

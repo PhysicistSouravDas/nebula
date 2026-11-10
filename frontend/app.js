@@ -76,6 +76,14 @@ const topBarUsername = document.getElementById('top-bar-username');
 const updateBanner = document.getElementById('update-banner');
 const updateReload = document.getElementById('update-reload');
 
+// forgot password elements
+const forgotPasswordSection = document.getElementById('forgot-password-section');
+const forgotPasswordForm = document.getElementById('forgot-password-form');
+const showForgotPasswordBtn = document.getElementById('show-forgot-password');
+const backToLoginBtn = document.getElementById('back-to-login');
+const forgotEmail = document.getElementById('forgot-email');
+const forgotMsg = document.getElementById('forgot-msg');
+
 // api endpoints
 // const API_URL = 'http://127.0.0.1:8000/api/focus/sessions/';
 // const TOKEN_URL = 'http://127.0.0.1:8000/api/token/';
@@ -170,6 +178,8 @@ function logout() {
 // ui toggles
 function showApp() {
     loginSection.style.display = 'none';
+    signupSection.style.display = 'none';
+    forgotPasswordSection.style.display = 'none';
     appSection.style.display = 'block';
     topBar.style.display = 'flex';
     topBarUsername.textContent = localStorage.getItem('username') || 'Observer';
@@ -178,6 +188,8 @@ function showApp() {
 function showLogin() {
     loginSection.style.display = 'block';
     appSection.style.display = 'none';
+    signupSection.style.display = 'none';
+    forgotPasswordSection.style.display = 'none';
     topBar.style.display = 'none';
 }
 
@@ -185,13 +197,28 @@ showSignupBtn.addEventListener('click', (e) => {
     e.preventDefault();
     loginSection.style.display = 'none';
     signupSection.style.display = 'block';
+    forgotPasswordSection.style.display = 'none';
 });
 
 showLoginBtn.addEventListener('click', (e) => {
     e.preventDefault();
     signupSection.style.display = 'none';
+    forgotPasswordSection.style.display = 'none';
     loginSection.style.display = 'block';
 });
+
+showForgotPasswordBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    loginSection.style.display = 'none';
+    forgotPasswordSection.style.display = 'block';
+});
+
+backToLoginBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    forgotPasswordSection.style.display = 'none';
+    loginSection.style.display = 'block';
+});
+
 
 async function registerUser(e) {
     e.preventDefault();
@@ -238,6 +265,34 @@ async function registerUser(e) {
 
 // Hook it up to the form submission
 signupForm.addEventListener('submit', registerUser);
+
+// Password Reset Request
+forgotPasswordForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    forgotMsg.style.display = 'none';
+
+    try {
+        const response = await fetch(`${REGISTER_URL}reset_password/`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: forgotEmail.value })
+        });
+
+        if (response.ok) {
+            forgotMsg.textContent = "If the email exists, a reset link has been sent.";
+            forgotMsg.style.color = "var(--accent-blue)";
+        } else {
+            forgotMsg.textContent = "Something went wrong. Please try again.";
+            forgotMsg.style.color = "var(--danger)";
+        }
+        forgotMsg.style.display = 'block';
+    } catch (error) {
+        forgotMsg.textContent = "Network error. Is the server running?";
+        forgotMsg.style.color = "var(--danger)";
+        forgotMsg.style.display = 'block';
+    }
+});
+
 
 // --- api functions (now with auth headers) ---
 
